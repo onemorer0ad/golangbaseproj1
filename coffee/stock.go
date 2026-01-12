@@ -8,27 +8,27 @@ import (
 )
 
 
-func StockGet(ingridients map[string]int){
-	for i, v := range ingridients {
+func StockGet(ingredients map[string]int){
+	for i, v := range ingredients {
 		fmt.Println(i,"=",v)
 	}
 }
-func StockAdd(ingridients map[string]int, parts []string){
+func StockAdd(ingredients map[string]int, parts []string){
 	item := parts[3]
 	count, err := strconv.Atoi(parts[4])
 	if err != nil {
-		fmt.Println("error when converting to integer")
+		fmt.Println("некорректные параметры")
 		return
 	}
-	if _,ok := ingridients[item]; ok && count >= 1 {
-		ingridients[item] += count
+	if _,ok := ingredients[item]; ok && count >= 1 {
+		ingredients[item] += count
 		fmt.Println("ok")
 	} else {
 		fmt.Println("некорректные параметры")
 	}
 	
 }
-func StockSet(ingridients map[string]int, parts []string){
+func StockSet(ingredients map[string]int, parts []string){
 	item := parts[3]
 	count, err := strconv.Atoi(parts[4])
 	if err != nil {
@@ -36,17 +36,33 @@ func StockSet(ingridients map[string]int, parts []string){
 		return
 	}
 	
-	if _,ok := ingridients[item]; ok && count >= 0 {
-		ingridients[item] = count
+	if _,ok := ingredients[item]; ok && count >= 0 {
+		ingredients[item] = count
 		fmt.Println("ok")
 	} else {
 		fmt.Println("некорректные параметры")
 	}
 }
 
-func Brew(recipes []recipes.Cofee, ingridients map[string]int, parts []string){
-	fmt.Println(parts)
+func Brew(coffeeRecipes []recipes.Coffee, ingredients map[string]int, parts []string, stats *Stats){
+	
 	coffeeName := parts[0]
+	
+	var found bool
+	var recipe recipes.Coffee
+	for i, v := range coffeeRecipes {
+		if coffeeRecipes[i].Name == coffeeName {
+			found = true
+			recipe = v
+			break
+		}
+	}
+	if !found{
+		fmt.Println("напиток не найден")
+		return
+	}
+
+
 	// command := parts[1]
 	amount, err := strconv.Atoi(parts[2])
 	if err != nil {
@@ -54,26 +70,32 @@ func Brew(recipes []recipes.Cofee, ingridients map[string]int, parts []string){
 		return
 	}
 	
-	for _, value := range recipes {
 		// напиток может быть приготовлен если рецепт известен и внесен платеж >= price и на складе хватает всех ингридиентов
-		if coffeeName == value.Name {
-			beans := ingridients["beans"]
-			water := ingridients["water"]
-			milk := ingridients["milk"]
-			sugar := ingridients["sugar"]
+	beans := ingredients["beans"]
+	water := ingredients["water"]
+	milk := ingredients["milk"]
+	sugar := ingredients["sugar"]
 
-			recipeBeans := value.Ingredients["beans"]
-			recipeWater := value.Ingredients["water"]
-			recipeMilk := value.Ingredients["milk"]
-			recipeSugar := value.Ingredients["sugar"]
+	recipeBeans := recipe.Ingredients["beans"]
+	recipeWater := recipe.Ingredients["water"]
+	recipeMilk := recipe.Ingredients["milk"]
+	recipeSugar := recipe.Ingredients["sugar"]
 
-			if beans >= recipeBeans && water >= recipeWater && milk >= recipeMilk && sugar >= recipeSugar && amount >= value.Price {
-				for _, v := range value.CookingSteps {
-					fmt.Println(v)
-				}
-			} else {
-				fmt.Println("Недостаточно ингридиентов либо денег")
+	if beans >= recipeBeans && water >= recipeWater && milk >= recipeMilk && sugar >= recipeSugar {
+		if amount >= recipe.Price {
+			for ing, needed := range recipe.Ingredients {
+				ingredients[ing] -= needed
 			}
+			for _, v := range recipe.CookingSteps {
+				fmt.Println(v)
+			}
+			stats.AddOrder(amount)
+		} else {
+			fmt.Println("недостаточно денег")
 		}
+
+	} else {
+		fmt.Println("Недостаточно ингридиентов")
 	}
+
 }

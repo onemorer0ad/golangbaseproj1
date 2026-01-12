@@ -1,6 +1,6 @@
 package recipes
 
-type Cofee struct{
+type Coffee struct{
 	Name string
 	Price int
 	Ingredients map[string]int
@@ -9,8 +9,8 @@ type Cofee struct{
 
 
 
-func NewCofee() []Cofee {
-	espresso := Cofee{
+func NewCoffee() []Coffee {
+	espresso := Coffee{
 		Name: "espresso",
 		Price: 150,
 		Ingredients: map[string]int{
@@ -20,7 +20,7 @@ func NewCofee() []Cofee {
 		CookingSteps: []string{"grind","tamp","brew 25s"},
 	}
 
-	americano := Cofee{
+	americano := Coffee{
 		Name: "americano",
 		Price: 180,
 		Ingredients: map[string]int{
@@ -30,7 +30,7 @@ func NewCofee() []Cofee {
 		CookingSteps: []string{"grind","brew 25s","add water"},
 	}
 
-	latte := Cofee{
+	latte := Coffee{
 		Name: "latte",
 		Price: 220,
 		Ingredients: map[string]int{
@@ -41,5 +41,5 @@ func NewCofee() []Cofee {
 		CookingSteps: []string{"grind","brew 25s","steam milk","mix"},
 	}
 
-	return []Cofee{espresso,americano,latte}
+	return []Coffee{espresso,americano,latte}
 }
