@@ -1,6 +1,6 @@
 package coffee
 
-func NewIngridients() map[string]int {
+func NewIngredients() map[string]int {
 	return map[string]int{
 		"beans": 0,
 		"water": 0,
